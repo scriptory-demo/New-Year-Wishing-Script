@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hello 2026 | The Aura Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent: #00f2ea;
+            --accent-2: #ff0050;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'Outfit', sans-serif;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- BACKGROUND AURORA BLOBS --- */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #ff0050; animation-delay: 0s; }
+        .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #00f2ea; animation-delay: -2s; }
+        .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #7b00ff; animation-delay: -4s; }
+
+        /* --- MAIN CONTAINER --- */
+        .card-container {
+            width: 90%;
+            max-width: 450px;
+            height: auto;
+            min-height: 500px;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: absolute;
+            width: 100%;
+            top: 0; left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- SCREEN 1: 2025 --- */
+        #screen-2025 { z-index: 2; transform: scale(1); opacity: 1; }
+        #screen-2025.hidden { transform: scale(0.8) translateY(-100px); opacity: 0; pointer-events: none; }
+
+        h1 { font-size: 5rem; font-weight: 900; line-height: 1; letter-spacing: -2px; margin-bottom: 10px; }
+        .gradient-text {
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            margin: 30px 0;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+        .stat-box b { display: block; font-size: 1.2rem; color: white; margin-bottom: 5px; }
+
+        /* --- HOLD BUTTON --- */
+        .hold-btn-container {
+            position: relative;
+            width: 250px;
+            height: 60px;
+            background: #222;
+            border-radius: 50px;
+            overflow: hidden;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .hold-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            z-index: 2;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .hold-progress {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff0050, #00f2ea);
+            transition: width 0.1s linear;
+        }
+
+        /* --- SCREEN 2: 2026 --- */
+        #screen-2026 { 
+            opacity: 0; 
+            transform: scale(1.2); 
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        #screen-2026.active { 
+            opacity: 1; 
+            transform: scale(1); 
+            pointer-events: auto;
+        }
+
+        .welcome-badge {
+            background: white;
+            color: black;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .year-new {
+            font-size: 6rem;
+            background: linear-gradient(135deg, #00f2ea 0%, #ff0050 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 234, 0.4));
+        }
+
+        .user-name { font-size: 2rem; font-weight: 300; margin: 10px 0 30px 0; }
+        
+        /* Input & Share */
+        .input-wrapper {
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 5px;
+            display: flex;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            flex: 1;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        .go-btn {
+            background: white;
+            color: black;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-wa {
+            margin-top: 20px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+        .share-wa:hover { opacity: 1; color: #25D366; }
+
+        /* --- WARP SPEED CANVAS --- */
+        #warpCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(20px, -20px) scale(1.1); } }
+        
+        /* Helper for Shake */
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    
+    <canvas id="warpCanvas"></canvas>
+    <canvas id="confettiCanvas" style="position:fixed; top:0; left:0; pointer-events:none; z-index:50;"></canvas>
+
+    <div class="card-container">
+        
+        <div id="screen-2025" class="card">
+            <h1 class="gradient-text">2025</h1>
+            <p style="opacity: 0.7;">Chapter Closed.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-box"><b>365</b>Days</div>
+                <div class="stat-box"><b>8,760</b>Hours</div>
+                <div class="stat-box"><b>∞</b>Memories</div>
+                <div class="stat-box"><b>1</b>You</div>
+            </div>
+
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">Ready to level up?</p>
+            
+            <div class="hold-btn-container" id="holdBtn">
+                <div class="hold-progress" id="progressBar"></div>
+                <div class="hold-text">HOLD TO UNLOCK 2026</div>
+            </div>
+        </div>
+
+        <div id="screen-2026" class="card">
+            <div class="welcome-badge">New Era</div>
+            <div class="year-new">2026</div>
+            <p>Happy New Year</p>
+            
+            <h2 id="displayName" class="user-name">Friend</h2>
+            
+            <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.5; padding: 0 10px;">
+                May your vibes be high and your problems be low this year.
+            </p>
+
+            <div class="input-wrapper">
+                <input type="text" id="nameInput" placeholder="Your Name...">
+                <button class="go-btn" onclick="updateName()"><i class="fas fa-arrow-right"></i></button>
+            </div>
+
+            <a href="#" onclick="shareWA()" class="share-wa"><i class="fab fa-whatsapp"></i> Share this vibe</a>
+        </div>
+
+    </div>
+
+    <audio id="popSound" src="https://assets.mixkit.co/sfx/preview/mixkit-party-horn-2780.mp3"></audio>
+
+    <script>
+        // --- LOGIC: NAME PARAMETER ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('n');
+        if(name) {
+            document.getElementById('displayName').innerText = decodeURIComponent(name);
+        }
+
+        // --- LOGIC: HOLD BUTTON ---
+        const holdBtn = document.getElementById('holdBtn');
+        const progress = document.getElementById('progressBar');
+        const screen25 = document.getElementById('screen-2025');
+        const screen26 = document.getElementById('screen-2026');
+        const warpCanvas = document.getElementById('warpCanvas');
+        
+        let holdTimer;
+        let progressVal = 0;
+        let isComplete = false;
+
+        // Mouse/Touch Events
+        const startHold = () => {
+            if(isComplete) return;
+            holdBtn.classList.add('shake'); // visual feedback
+            holdTimer = setInterval(() => {
+                progressVal += 2; // Speed of filling
+                progress.style.width = progressVal + '%';
+                
+                if(progressVal >= 100) {
+                    clearInterval(holdTimer);
+                    isComplete = true;
+                    triggerTransition();
+                }
+            }, 15);
+        };
+
+        const endHold = () => {
+            if(isComplete) return;
+            clearInterval(holdTimer);
+            holdBtn.classList.remove('shake');
+            // Animate backwards
+            const downTimer = setInterval(() => {
+                if(progressVal <= 0) { clearInterval(downTimer); }
+                else {
+                    progressVal -= 2;
+                    progress.style.width = progressVal + '%';
+                }
+            }, 5);
+        };
+
+        holdBtn.addEventListener('mousedown', startHold);
+        holdBtn.addEventListener('mouseup', endHold);
+        holdBtn.addEventListener('mouseleave', endHold);
+        holdBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startHold(); });
+        holdBtn.addEventListener('touchend', endHold);
+
+        // --- TRANSITION EFFECT ---
+        function triggerTransition() {
+            // 1. Play Sound
+            document.getElementById('popSound').play().catch(()=>{});
+
+            // 2. Warp Effect Visuals
+            warpCanvas.style.opacity = 1;
+            drawWarpSpeed(); 
+
+            // 3. Switch Screens
+            screen25.classList.add('hidden');
+            
+            setTimeout(() => {
+                warpCanvas.style.opacity = 0; // Fade out warp
+                screen26.classList.add('active');
+                launchConfetti(); // Boom!
+            }, 1200);
+        }
+
+        // --- SHARE & UPDATE ---
+        function updateName() {
+            const val = document.getElementById('nameInput').value;
+            if(!val) return;
+            const newUrl = window.location.href.split('?')[0] + "?n=" + encodeURIComponent(val);
+            document.getElementById('displayName').innerText = val;
+            
+            // Copy
+            navigator.clipboard.writeText(newUrl);
+            alert("Name updated! Link copied to clipboard.");
+        }
+
+        function shareWA() {
+            const val = document.getElementById('nameInput').value || document.getElementById('displayName').innerText;
+            const url = window.location.href.split('?')[0] + "?n=" + encodeURIComponent(val);
+            const msg = `🚀 *2026 is loading...* \n\nI created a vibe check for you. Open this to unlock your New Year! 👇\n${url}`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
+        }
+
+        // --- CANVAS 1: CONFETTI (Simple version) ---
+        const cCanvas = document.getElementById('confettiCanvas');
+        const cCtx = cCanvas.getContext('2d');
+        cCanvas.width = window.innerWidth;
+        cCanvas.height = window.innerHeight;
+        let confetti = [];
+
+        function launchConfetti() {
+            for(let i=0; i<100; i++) {
+                confetti.push({
+                    x: window.innerWidth/2, y: window.innerHeight/2,
+                    vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15,
+                    color: `hsl(${Math.random()*360}, 100%, 50%)`,
+                    size: Math.random()*8 + 2
+                });
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+            confetti.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.1; // gravity
+                p.size *= 0.96; // shrink
+                cCtx.fillStyle = p.color;
+                cCtx.fillRect(p.x, p.y, p.size, p.size);
+                if(p.size < 0.5) confetti.splice(i, 1);
+            });
+            if(confetti.length > 0) requestAnimationFrame(animateConfetti);
+        }
+
+        // --- CANVAS 2: WARP SPEED (Star Wars Style) ---
+        const wCtx = warpCanvas.getContext('2d');
+        let stars = [];
+        let warpActive = true;
+
+        function drawWarpSpeed() {
+            if(!warpActive) return;
+            warpCanvas.width = window.innerWidth;
+            warpCanvas.height = window.innerHeight;
+            const cx = warpCanvas.width/2; 
+            const cy = warpCanvas.height/2;
+
+            // Init stars
+            if(stars.length === 0) {
+                for(let i=0; i<200; i++) stars.push({x:Math.random()*warpCanvas.width, y:Math.random()*warpCanvas.height, z:Math.random()*warpCanvas.width});
+            }
+
+            wCtx.fillStyle = "rgba(0,0,0,0.3)"; // Trail
+            wCtx.fillRect(0, 0, warpCanvas.width, warpCanvas.height);
+            wCtx.fillStyle = "#fff";
+
+            stars.forEach(s => {
+                s.z -= 15; // Speed
+                if(s.z <= 0) { s.z = warpCanvas.width; s.x = Math.random()*warpCanvas.width; s.y = Math.random()*warpCanvas.height; }
+                
+                const sx = (s.x - cx) * (warpCanvas.width/s.z) + cx;
+                const sy = (s.y - cy) * (warpCanvas.width/s.z) + cy;
+                const size = (1 - s.z/warpCanvas.width) * 4;
+                
+                wCtx.beginPath();
+                wCtx.arc(sx, sy, size, 0, Math.PI*2);
+                wCtx.fill();
+            });
+
+            if(window.getComputedStyle(warpCanvas).opacity > 0) {
+                requestAnimationFrame(drawWarpSpeed);
+            }
+        }
+    </script>
+</body>
+</html>

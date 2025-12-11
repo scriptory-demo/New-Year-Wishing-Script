@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodbye 2025 | Welcome 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #ff0055;
+            --secondary: #00ddff;
+            --dark: #050505;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: white;
+            overflow: hidden; /* Prevent scroll */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .bg-gradient {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
+            z-index: -2;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* --- SCREEN CONTAINERS --- */
+        .screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+            padding: 20px;
+        }
+
+        /* --- SCREEN 1: BYE 2025 --- */
+        #screen-2025 {
+            background: rgba(0,0,0,0.85);
+            z-index: 10;
+        }
+        
+        #screen-2025.slide-up {
+            transform: translateY(-100%);
+        }
+
+        .sad-text {
+            font-size: 1.5rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .year-old {
+            font-size: 6rem;
+            font-weight: 900;
+            background: linear-gradient(to right, #888, #444);
+            -webkit-background-clip: text;
+            color: transparent;
+            opacity: 0.8;
+        }
+
+        .btn-unlock {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: var(--primary);
+            border: none;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--primary);
+            animation: pulse 1.5s infinite;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-unlock:hover { transform: scale(1.05); }
+
+        /* --- SCREEN 2: HELLO 2026 --- */
+        #screen-2026 {
+            z-index: 5;
+            background: transparent;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .wishing-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #ffdd00;
+            margin-bottom: 10px;
+        }
+
+        .neon-2026 {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px var(--secondary),
+                0 0 40px var(--secondary),
+                0 0 80px var(--secondary);
+            margin: 10px 0;
+            animation: flicker 2s infinite alternate;
+        }
+
+        .name-display {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- INPUT & SHARE --- */
+        .input-group {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            text-align: center;
+            font-size: 1rem;
+            width: 80%;
+            outline: none;
+        }
+
+        .btn-share {
+            background: #25D366;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        
+        .btn-create {
+            background: white;
+            color: black;
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(255, 0, 85, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        @keyframes flicker { 0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px var(--secondary), 0 0 40px var(--secondary), 0 0 80px var(--secondary), 0 0 90px var(--secondary); } 20%, 24%, 55% { text-shadow: none; } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .neon-2026 { font-size: 3.5rem; }
+            .year-old { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gradient"></div>
+    <canvas id="fireworksCanvas"></canvas>
+
+    <div id="screen-2025" class="screen">
+        <div class="sad-text">Goodbye...</div>
+        <div class="year-old">2025</div>
+        <p style="color: #ccc; max-width: 300px; margin-top: 10px;">
+            Thank you for the lessons, the memories, and the growth.
+        </p>
+        <button class="btn-unlock" onclick="enter2026()">
+            <i class="fas fa-rocket"></i> Launch 2026
+        </button>
+    </div>
+
+    <div id="screen-2026" class="screen">
+        <div class="glass-card">
+            <div class="wishing-text">Wishing you a Happy</div>
+            <div class="neon-2026">2026</div>
+            <div class="wishing-text">New Year</div>
+            
+            <h2 id="userName" class="name-display"></h2>
+            
+            <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                May this year bring new happiness, new goals, and new achievements.
+            </p>
+
+            <div class="input-group">
+                <input type="text" id="nameInput" placeholder="Enter Your Name">
+                <button class="btn-create" onclick="generateLink()">Create Yours</button>
+                <a href="#" id="shareBtn" class="btn-share" onclick="shareOnWhatsapp()">
+                    <i class="fab fa-whatsapp"></i> Share on WhatsApp
+                </a>
+            </div>
+        </div>
+        
+        <audio id="bgMusic" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+        </audio>
+    </div>
+
+    <script>
+        // --- LOGIC: URL & NAME ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const nameFromUrl = urlParams.get('n');
+        const nameDisplay = document.getElementById('userName');
+        const inputGroup = document.querySelector('.input-group');
+
+        if (nameFromUrl) {
+            // User is viewing a shared link
+            nameDisplay.innerText = decodeURIComponent(nameFromUrl) + "!";
+            // Hide input, show "Create Your Own" button logic if needed
+        } else {
+            // User is creating their own
+            nameDisplay.innerText = "Friend!";
+        }
+
+        // --- FUNCTION: TRANSITION ---
+        function enter2026() {
+            document.getElementById('screen-2025').classList.add('slide-up');
+            
+            // Try to play music (User interaction allows this)
+            const music = document.getElementById('bgMusic');
+            music.volume = 0.5;
+            music.play().catch(e => console.log("Audio requires interaction"));
+            
+            // Start Fireworks intensively
+            loop(); 
+        }
+
+        // --- FUNCTION: GENERATE LINK ---
+        function generateLink() {
+            const nameVal = document.getElementById('nameInput').value;
+            if(nameVal.trim() === "") {
+                alert("Please enter your name first!");
+                return;
+            }
+            const currentUrl = window.location.href.split('?')[0];
+            const newUrl = `${currentUrl}?n=${encodeURIComponent(nameVal)}`;
+            
+            // Update UI to show it's ready
+            nameDisplay.innerText = nameVal + "!";
+            
+            // Copy to clipboard or alert
+            navigator.clipboard.writeText(newUrl).then(() => {
+                alert("Link Copied! Send it to your friends.");
+            });
+        }
+
+        // --- FUNCTION: WHATSAPP SHARE ---
+        function shareOnWhatsapp() {
+            const nameVal = document.getElementById('nameInput').value || "Friend";
+            const currentUrl = window.location.href.split('?')[0] + "?n=" + encodeURIComponent(nameVal);
+            const text = `See the magic! ✨ I sent you a special 2026 Wish. \n\nTap here to open 👇\n${currentUrl}`;
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // --- FIREWORKS CANVAS SCRIPT ---
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let fireworks = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Firework {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = height;
+                this.targetY = Math.random() * (height / 2);
+                this.speed = 5 + Math.random() * 5;
+                this.angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.5;
+                this.vx = Math.cos(this.angle) * this.speed;
+                this.vy = Math.sin(this.angle) * this.speed;
+                this.hue = Math.random() * 360;
+                this.brightness = 50 + Math.random() * 20;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05; // gravity
+                this.brightness += 1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${this.hue}, 100%, ${this.brightness}%)`;
+                ctx.fill();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, hue) {
+                this.x = x;
+                this.y = y;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 4 + 1;
+                this.vx = Math.cos(this.angle) * this.speed;
+                this.vy = Math.sin(this.angle) * this.speed;
+                this.hue = hue;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${this.hue}, 100%, 50%)`;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function loop() {
+            // Trail effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
+            ctx.fillRect(0, 0, width, height);
+
+            if (Math.random() < 0.05) fireworks.push(new Firework());
+
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].update();
+                fireworks[i].draw();
+                if (fireworks[i].vy >= 0) {
+                    // Explode
+                    for (let j = 0; j < 50; j++) {
+                        particles.push(new Particle(fireworks[i].x, fireworks[i].y, fireworks[i].hue));
+                    }
+                    fireworks.splice(i, 1);
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+            requestAnimationFrame(loop);
+        }
+    </script>
+</body>
+</html>
